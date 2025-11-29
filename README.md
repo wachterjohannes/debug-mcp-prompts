@@ -2,8 +2,6 @@
 
 **⚠️ PROTOTYPE - FOR TESTING AND DISCUSSION PURPOSES ONLY**
 
-**This repository contains only bootstrap files and documentation. No actual implementation code is included. This is a prototype to facilitate discussion and planning for the prompt templates.**
-
 ---
 
 Code generation prompts for Symfony development, providing structured templates for creating console commands and other components.
