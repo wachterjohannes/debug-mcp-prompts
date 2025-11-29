@@ -130,7 +130,7 @@ To add a new prompt:
    <?php
    namespace Wachterjohannes\DebugMcp\Prompts;
 
-   use PhpMcp\Server\Attributes\McpPrompt;
+   use Mcp\Capability\Attribute\McpPrompt;
 
    class EntityCrudPrompt
    {

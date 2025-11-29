@@ -24,7 +24,7 @@ debug-mcp-prompts
 Prompts return message arrays for LLM conversation:
 
 ```php
-use PhpMcp\Server\Attributes\McpPrompt;
+use Mcp\Capability\Attribute\McpPrompt;
 
 class PromptProvider
 {
@@ -172,7 +172,7 @@ touch templates/new-prompt.txt
 <?php
 namespace Wachterjohannes\DebugMcp\Prompts;
 
-use PhpMcp\Server\Attributes\McpPrompt;
+use Mcp\Capability\Attribute\McpPrompt;
 
 class NewPrompt
 {
@@ -236,7 +236,7 @@ The server discovers prompts through:
 Uses official `modelcontextprotocol/php-sdk` attributes:
 
 ```php
-use PhpMcp\Server\Attributes\McpPrompt;
+use Mcp\Capability\Attribute\McpPrompt;
 
 #[McpPrompt(
     name: 'prompt_identifier',
