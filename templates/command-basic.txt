@@ -1,0 +1,100 @@
+Create a Symfony Console Command with the following specifications:
+
+Command Name: {command_name}
+Description: {description}
+
+Generate a complete Symfony Console Command class following these requirements:
+
+## CLASS STRUCTURE
+
+Namespace: App\Command
+Class Name: Convert the command name to PascalCase and add "Command" suffix
+- Example: app:process-data → ProcessDataCommand
+- Example: app:send-emails → SendEmailsCommand
+
+Use the #[AsCommand] attribute for configuration:
+```php
+#[AsCommand(
+    name: '{command_name}',
+    description: '{description}'
+)]
+```
+
+Extend: Symfony\Component\Console\Command\Command
+
+## DEPENDENCIES
+
+Use constructor injection for any required services:
+```php
+public function __construct(
+    private ServiceInterface $service,
+    private LoggerInterface $logger,
+) {
+    parent::__construct();
+}
+```
+
+## EXECUTE METHOD
+
+Implement the execute() method with:
+
+1. Create SymfonyStyle instance for output:
+```php
+$io = new SymfonyStyle($input, $output);
+```
+
+2. Use SymfonyStyle methods for output:
+- $io->title('Title')
+- $io->section('Section')
+- $io->success('Success message')
+- $io->error('Error message')
+- $io->warning('Warning message')
+- $io->info('Info message')
+
+3. Return appropriate exit codes:
+- return Command::SUCCESS; (on success)
+- return Command::FAILURE; (on failure)
+
+4. Include error handling:
+```php
+try {
+    // Command logic
+    $io->success('Operation completed successfully');
+    return Command::SUCCESS;
+} catch (\Exception $e) {
+    $io->error('Operation failed: ' . $e->getMessage());
+    return Command::FAILURE;
+}
+```
+
+## ARGUMENTS AND OPTIONS (if needed)
+
+If the command needs arguments or options, implement the configure() method:
+```php
+protected function configure(): void
+{
+    $this
+        ->addArgument('name', InputArgument::REQUIRED, 'Argument description')
+        ->addOption('option', 'o', InputOption::VALUE_NONE, 'Option description');
+}
+```
+
+Then access them in execute():
+```php
+$name = $input->getArgument('name');
+$option = $input->getOption('option');
+```
+
+## BEST PRACTICES
+
+1. Add strict types declaration at the top of the file
+2. Include PHPDoc comments for the class
+3. Follow PSR-12 coding standards
+4. Use proper imports for all classes
+5. Log important operations using injected logger
+6. Provide meaningful output messages
+7. Handle errors gracefully
+
+## COMPLETE IMPLEMENTATION
+
+Generate the complete, production-ready command class now, following all the requirements above.

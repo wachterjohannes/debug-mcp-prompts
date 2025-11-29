@@ -1,0 +1,210 @@
+Create an Interactive Symfony Console Command with the following specifications:
+
+Command Name: {command_name}
+Description: {description}
+
+Generate a complete Symfony Console Command class with interactive user input capabilities.
+
+## CLASS STRUCTURE
+
+Namespace: App\Command
+Class Name: Convert the command name to PascalCase and add "Command" suffix
+- Example: app:create-user → CreateUserCommand
+- Example: app:import-data → ImportDataCommand
+
+Use the #[AsCommand] attribute for configuration:
+```php
+#[AsCommand(
+    name: '{command_name}',
+    description: '{description}'
+)]
+```
+
+Extend: Symfony\Component\Console\Command\Command
+
+## DEPENDENCIES
+
+Use constructor injection for any required services:
+```php
+public function __construct(
+    private ServiceInterface $service,
+    private LoggerInterface $logger,
+) {
+    parent::__construct();
+}
+```
+
+## INTERACTIVE INPUT
+
+Implement the interact() method to gather missing information:
+
+```php
+protected function interact(InputInterface $input, OutputInterface $output): void
+{
+    $helper = $this->getHelper('question');
+
+    // Text question
+    if (!$input->getArgument('name')) {
+        $question = new Question('Please enter the name: ');
+        $name = $helper->ask($input, $output, $question);
+        $input->setArgument('name', $name);
+    }
+
+    // Confirmation question
+    $question = new ConfirmationQuestion('Continue with this action? (y/n) ', false);
+    if (!$helper->ask($input, $output, $question)) {
+        throw new \RuntimeException('Operation cancelled by user');
+    }
+
+    // Choice question
+    $question = new ChoiceQuestion(
+        'Please select an option:',
+        ['option1', 'option2', 'option3'],
+        0
+    );
+    $choice = $helper->ask($input, $output, $question);
+}
+```
+
+Import required classes:
+```php
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+```
+
+## EXECUTE METHOD
+
+Implement the execute() method with:
+
+1. Create SymfonyStyle instance for output:
+```php
+$io = new SymfonyStyle($input, $output);
+```
+
+2. Display information about what will be done:
+```php
+$io->title('Command Title');
+$io->section('Step 1: Validation');
+```
+
+3. Show summary of gathered information:
+```php
+$io->table(
+    ['Setting', 'Value'],
+    [
+        ['Name', $input->getArgument('name')],
+        ['Option', $input->getOption('option')],
+    ]
+);
+```
+
+4. Confirm before proceeding (optional additional confirmation):
+```php
+if (!$io->confirm('Proceed with operation?', true)) {
+    $io->warning('Operation cancelled');
+    return Command::SUCCESS;
+}
+```
+
+5. Use progress bar for long operations:
+```php
+$io->progressStart($totalItems);
+foreach ($items as $item) {
+    // Process item
+    $io->progressAdvance();
+}
+$io->progressFinish();
+```
+
+6. Return appropriate exit codes:
+```php
+return Command::SUCCESS; // on success
+return Command::FAILURE; // on failure
+```
+
+7. Include error handling:
+```php
+try {
+    // Command logic
+    $io->success('Operation completed successfully');
+    return Command::SUCCESS;
+} catch (\Exception $e) {
+    $io->error('Operation failed: ' . $e->getMessage());
+    return Command::FAILURE;
+}
+```
+
+## CONFIGURE METHOD
+
+Define arguments and options if needed:
+```php
+protected function configure(): void
+{
+    $this
+        ->addArgument('name', InputArgument::OPTIONAL, 'Item name')
+        ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force operation without confirmation');
+}
+```
+
+## QUESTION TYPES
+
+1. **Simple Text Input**:
+```php
+$question = new Question('Enter value: ', 'default_value');
+$value = $helper->ask($input, $output, $question);
+```
+
+2. **Hidden Input (for passwords)**:
+```php
+$question = new Question('Enter password: ');
+$question->setHidden(true);
+$password = $helper->ask($input, $output, $question);
+```
+
+3. **Validation**:
+```php
+$question = new Question('Enter email: ');
+$question->setValidator(function ($answer) {
+    if (!filter_var($answer, FILTER_VALIDATE_EMAIL)) {
+        throw new \RuntimeException('Invalid email address');
+    }
+    return $answer;
+});
+$email = $helper->ask($input, $output, $question);
+```
+
+4. **Choice Question**:
+```php
+$question = new ChoiceQuestion(
+    'Select environment:',
+    ['development', 'staging', 'production'],
+    0
+);
+$environment = $helper->ask($input, $output, $question);
+```
+
+5. **Confirmation**:
+```php
+$question = new ConfirmationQuestion('Are you sure? (y/n) ', false);
+if ($helper->ask($input, $output, $question)) {
+    // User confirmed
+}
+```
+
+## BEST PRACTICES
+
+1. Add strict types declaration at the top of the file
+2. Include PHPDoc comments for the class and methods
+3. Follow PSR-12 coding standards
+4. Use proper imports for all classes
+5. Validate all user input
+6. Provide clear questions and helpful default values
+7. Show summary before executing dangerous operations
+8. Use progress bars for long-running operations
+9. Log important operations using injected logger
+10. Provide meaningful feedback messages
+
+## COMPLETE IMPLEMENTATION
+
+Generate the complete, production-ready interactive command class now, following all the requirements above. Include meaningful examples of different question types appropriate for the command's purpose.
